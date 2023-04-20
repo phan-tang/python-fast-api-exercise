@@ -14,3 +14,5 @@ def generate_db_connection_string():
 
 
 SQLALCHEMY_URL = generate_db_connection_string()
+
+ADMIN_DEFAULT_PASSWORD = 'password'
