@@ -27,7 +27,9 @@ def upgrade() -> None:
         sa.Column('last_name', sa.String(255), nullable=False),
         sa.Column('hashed_password', sa.String, nullable=False),
         sa.Column('is_active', sa.Boolean, default=1),
-        sa.Column('is_admin', sa.Boolean, default=0)
+        sa.Column('is_admin', sa.Boolean, default=0),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime)
     )
     op.create_foreign_key('fk_user_company', 'users',
                           'companies', ['company_id'], ['id'])

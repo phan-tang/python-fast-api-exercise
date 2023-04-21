@@ -8,7 +8,7 @@ Create Date: 2023-04-19 11:19:34.611267
 from alembic import op
 import sqlalchemy as sa
 
-from schemas.task import TaskStatus
+from schemas import TaskStatus
 
 # revision identifiers, used by Alembic.
 revision = '810a4530e1b3'
@@ -26,7 +26,9 @@ def upgrade() -> None:
         sa.Column('description', sa.String),
         sa.Column('status', sa.Enum(TaskStatus),
                   nullable=False, default=TaskStatus.NEW),
-        sa.Column('priority', sa.Numeric, nullable=False, default=1)
+        sa.Column('priority', sa.Numeric, nullable=False, default=1),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime)
     )
     op.create_foreign_key('fk_task_user', 'tasks',
                           'users', ['user_id'], ['id'])
@@ -34,4 +36,4 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_table('tasks')
-    # op.execute('DROP TYPE taskstatus;')
+    op.execute('DROP TYPE taskstatus;')

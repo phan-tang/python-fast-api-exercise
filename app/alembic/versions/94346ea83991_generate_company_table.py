@@ -8,7 +8,7 @@ Create Date: 2023-04-19 11:19:19.443355
 from alembic import op
 import sqlalchemy as sa
 
-from schemas.company import CompanyMode
+from schemas import CompanyMode
 
 # revision identifiers, used by Alembic.
 revision = '94346ea83991'
@@ -25,10 +25,12 @@ def upgrade() -> None:
         sa.Column('description', sa.String),
         sa.Column('mode', sa.Enum(CompanyMode),
                   nullable=False, default=CompanyMode.ACTIVE),
-        sa.Column('rating', sa.Numeric)
+        sa.Column('rating', sa.Numeric),
+        sa.Column('created_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime)
     )
 
 
 def downgrade() -> None:
     op.drop_table('companies')
-    # op.execute('DROP TYPE companymode;')
+    op.execute('DROP TYPE companymode;')
