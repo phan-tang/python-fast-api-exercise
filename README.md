@@ -5,4 +5,47 @@ TO-DO application has 3 tables: User, Company, Task. There are three roles: supe
 - Admin can manage tasks, users of their company.
 - User can be assigned to tasks.
 
-Notes: API get list of items can just be filtered by one value each field, if we use search and type 'a' to search user by name, list of user will not contains user which has name 'A'.
+Notes: API get list of items can just be filtered by one value each field, if we use search and type 'a' to search user by name, list of user will not contains user who has name 'A'.
+
+
+### Install and start application
+```
+Run command to create virtual environment (Linux):
+> virtualenv --python /usr/bin/python3.10 venv
+```
+
+```
+Run command to start virtual environment:
+> source ./venv/bin/activate
+```
+
+```
+Install necessary packages by command:
+> pip install -r requirements.txt
+```
+
+```
+Run postgresql via docker:
+> docker compose up -d
+```
+
+```
+Copy .env.example file and change its name to .env
+
+Migrate and seed data for database by command:
+> alembic upgrade head
+
+After seed data, there is a superadmin in user table with username is superadmin and password is password.
+```
+
+```
+Create JWT_SECRET by command:
+> openssl rand -hex 32
+
+After create token, copy it into .env file
+```
+
+```
+Run application by command:
+> uvicorn main:app --reload
+```
