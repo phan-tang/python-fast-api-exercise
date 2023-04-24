@@ -1,0 +1,31 @@
+version: '1'
+services:
+  pgsql:
+    image: "postgres:14"
+    container_name: fastapi
+    environment:
+      PGPASSWORD: '${DB_PASSWORD:-secret}'
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:--secret}
+    volumes:
+      - fastapi_db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-q",
+          "-d",
+          "${DB_NAME}",
+          "-U",
+          "${DB_USERNAME}"
+        ]
+      retries: 3
+      timeout: 5s
+volumes:
+  fastapi_db:
+    driver: local
