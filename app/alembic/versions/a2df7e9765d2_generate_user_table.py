@@ -12,7 +12,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from schemas import get_password_hash
-from settings import ADMIN_DEFAULT_PASSWORD
+from config import ADMIN_DEFAULT_PASSWORD
 
 # revision identifiers, used by Alembic.
 revision = 'a2df7e9765d2'
