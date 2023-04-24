@@ -10,7 +10,7 @@ from service import CompanyService, token_interceptor
 router = APIRouter(prefix='/companies', tags=["Company"])
 
 
-# Test bt psotman
+# Test by postman
 
 @router.get('/request', response_model=List[CompanyViewModel])
 async def get_companies_by_request(request: Request, service: CompanyService = Depends()):
@@ -79,4 +79,7 @@ async def delete_company(
     company = service.show(company_id)
     if not company:
         raise service.not_found_exception()
+    if len(service.get_company_users(company_id)) > 0:
+        raise service.access_denied_exception(
+            detail="This company has at least one employee at the moment")
     return service.delete(company)

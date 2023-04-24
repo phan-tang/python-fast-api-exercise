@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from schemas import Company
+from schemas import Company, User
 
 from .base import BaseRepository, InterfaceRepository
 
@@ -17,3 +17,6 @@ class CompanyRepository(BaseRepository, InterfaceRepository):
 
     def show(self, id: UUID):
         return self.db.query(Company).filter(Company.id == id).first()
+
+    def get_company_users(self, company_id: UUID):
+        return self.db.query(User).filter(User.company_id == company_id).all()

@@ -49,3 +49,6 @@ class UserService(QueryParamsService):
 
     def check_access_permission(self, user_company_id: UUID, admin_company_id: UUID):
         return str(user_company_id) == str(admin_company_id)
+
+    def get_user_tasks(self, id: UUID):
+        return self.repository.get_user_tasks(id)
