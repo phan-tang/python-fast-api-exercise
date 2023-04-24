@@ -92,4 +92,7 @@ async def delete_user(
     user = service.show(user_id)
     if not user or not service.check_access_permission(user.company_id, admin.company_id):
         raise service.not_found_exception()
+    if len(service.get_user_tasks(user_id)) > 0:
+        raise service.access_denied_exception(
+            detail="This user is assigned to at least one task at the moment")
     return service.delete(user)

@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from schemas import User
+from schemas import User, Task
 
 from .base import BaseRepository, InterfaceRepository
 
@@ -18,3 +18,6 @@ class UserRepository(BaseRepository, InterfaceRepository):
 
     def show(self, id: UUID):
         return self.db.query(User).filter(User.id == id).first()
+
+    def get_user_tasks(self, id: UUID):
+        return self.db.query(Task).filter(Task.user_id == id).all()
