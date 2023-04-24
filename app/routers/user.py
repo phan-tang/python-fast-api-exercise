@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Query
 from uuid import UUID
 from typing import List
 
@@ -10,15 +10,39 @@ from service import UserService, token_interceptor
 router = APIRouter(prefix="/users", tags=["User"])
 
 
-# @router.get('', response_model=List[UserViewModel])
-@router.get('')
+@router.get('', response_model=List[UserViewModel])
 async def get_users(
+        paginate: int = Query(default=10),
+        page: int = Query(default=1),
+        sort: str = Query(default="id"),
+        order: str = Query(default="asc"),
+        search: str | None = None,
+        is_admin: bool | None = None,
+        admin: User = Depends(token_interceptor),
+        service: UserService = Depends()):
+    if not service.check_admin_permission(admin):
+        raise service.access_denied_exception()
+    params = {
+        "paginate": paginate,
+        "page": page,
+        "sort": sort,
+        "order": order,
+        "search": search,
+        "is_admin": is_admin
+    }
+    return service.list(admin.company_id, params)
+
+
+# Test by postman
+
+@router.get('/request', response_model=List[UserViewModel])
+async def get_users_by_request(
         request: Request,
         admin: User = Depends(token_interceptor),
         service: UserService = Depends()):
     if not service.check_admin_permission(admin):
         raise service.access_denied_exception()
-    return service.list(admin.company_id, request)
+    return service.list_by_request(admin.company_id, request)
 
 
 @router.get('/{user_id}', response_model=UserViewModel)

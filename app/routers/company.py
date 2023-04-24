@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Query
 from starlette import status
 from uuid import UUID
 from typing import List
@@ -10,9 +10,31 @@ from service import CompanyService, token_interceptor
 router = APIRouter(prefix='/companies', tags=["Company"])
 
 
+# Test bt psotman
+
+@router.get('/request', response_model=List[CompanyViewModel])
+async def get_companies_by_request(request: Request, service: CompanyService = Depends()):
+    return service.list_by_request(request)
+
+
 @router.get('', response_model=List[CompanyViewModel])
-async def get_companies(request: Request, service: CompanyService = Depends()):
-    return service.list(request)
+async def get_companies(
+        paginate: int = Query(default=10),
+        page: int = Query(default=1),
+        sort: str = Query(default="id"),
+        order: str = Query(default="asc"),
+        search: str | None = None,
+        rating: int | None = None,
+        service: CompanyService = Depends()):
+    params = {
+        "paginate": paginate,
+        "page": page,
+        "sort": sort,
+        "order": order,
+        "search": search,
+        "rating": rating
+    }
+    return service.list(params)
 
 
 @router.get('/{company_id}', response_model=CompanyViewModel)

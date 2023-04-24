@@ -15,8 +15,13 @@ class CompanyService(QueryParamsService):
     def __init__(self, repository: CompanyRepository = Depends()) -> None:
         self.repository = repository
 
-    def list(self, request: Request):
+    def list_by_request(self, request: Request):
         params = CompanyQueryRequest(**dict(request.query_params))
+        params = self.transform_query_params(params)
+        return self.repository.list(params)
+
+    def list(self, params: dict):
+        params = CompanyQueryRequest(**params)
         params = self.transform_query_params(params)
         return self.repository.list(params)
 

@@ -15,8 +15,13 @@ class UserService(QueryParamsService):
     def __init__(self, repository: UserRepository = Depends()) -> None:
         self.repository = repository
 
-    def list(self, company_id: UUID, request: Request):
+    def list_by_request(self, company_id: UUID, request: Request):
         params = UserQueryRequest(**dict(request.query_params))
+        params = self.transform_query_params(params)
+        return self.repository.list(company_id, params)
+
+    def list(self, company_id: UUID, params: dict):
+        params = UserQueryRequest(**params)
         params = self.transform_query_params(params)
         return self.repository.list(company_id, params)
 

@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends, Request
-from typing import List
+from fastapi import APIRouter, Depends, Request, Query
+from typing import List, Optional
 from uuid import UUID
 
 from models import BaseTaskViewModel, TaskViewModel, TaskModel
@@ -12,12 +12,35 @@ router = APIRouter(prefix="/tasks", tags=["Task"])
 
 @router.get('', response_model=List[TaskViewModel])
 async def get_tasks(
+        paginate: int = Query(default=10),
+        page: int = Query(default=1),
+        sort: str = Query(default="id"),
+        order: str = Query(default="asc"),
+        search: str | None = None,
+        admin: User = Depends(token_interceptor),
+        service: TaskService = Depends()):
+    if not service.check_admin_permission(admin):
+        raise service.access_denied_exception()
+    params = {
+        "paginate": paginate,
+        "page": page,
+        "sort": sort,
+        "order": order,
+        "search": search
+    }
+    return service.list(admin.company_id, params)
+
+
+# Test by postman
+
+@router.get('/request', response_model=List[TaskViewModel])
+async def get_tasks_by_request(
         request: Request,
         admin: User = Depends(token_interceptor),
         service: TaskService = Depends()):
     if not service.check_admin_permission(admin):
         raise service.access_denied_exception()
-    return service.list(admin.company_id, request)
+    return service.list_by_request(admin.company_id, request)
 
 
 @router.get('/{task_id}', response_model=TaskViewModel)
