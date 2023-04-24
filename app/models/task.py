@@ -4,6 +4,7 @@ from uuid import UUID
 from typing import Optional
 from models import BaseUserViewModel
 from schemas import TaskStatus
+from .request import BaseQueryRequest
 
 
 class TaskModel(BaseModel):
@@ -33,3 +34,15 @@ class TaskViewModel(BaseTaskViewModel):
 
     class Config:
         orm_mode = True
+
+
+class TaskQueryRequest(BaseQueryRequest):
+
+    def get_sort_fields(self):
+        return ['id', 'user_id', 'status', 'priority']
+
+    def get_filter_fields(self):
+        return []
+
+    def get_search_fields(self):
+        return ['summary']

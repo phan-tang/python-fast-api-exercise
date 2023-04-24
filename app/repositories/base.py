@@ -43,7 +43,7 @@ class BaseRepository:
     def search(self, query, model, params):
         if params['search']['value'] is None:
             return query
-        search_args = [params['search']['value'] == getattr(model, field)
+        search_args = [getattr(model, field).like(f"%{params['search']['value'].lower()}%")
                        for field in params['search']['fields']]
         return query.filter(or_(*search_args))
 

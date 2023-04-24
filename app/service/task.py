@@ -1,22 +1,24 @@
-from fastapi import Depends
+from fastapi import Depends, Request
 from uuid import UUID
 from datetime import datetime
 
 from schemas import Task
-from models import TaskModel
+from models import TaskModel, TaskQueryRequest
 
 from repositories import TaskRepository
-from .base import BaseService
+from .query_params import QueryParamsService
 
 
-class TaskService(BaseService):
+class TaskService(QueryParamsService):
     repository: TaskRepository
 
     def __init__(self, repository: TaskRepository = Depends()) -> None:
         self.repository = repository
 
-    def list(self, company_id: UUID):
-        return self.repository.list(company_id)
+    def list(self, company_id: UUID, request: Request):
+        params = TaskQueryRequest(**dict(request.query_params))
+        params = self.transform_query_params(params)
+        return self.repository.list(company_id, params)
 
     def show(self, id: UUID, company_id: UUID):
         return self.repository.show(id, company_id)

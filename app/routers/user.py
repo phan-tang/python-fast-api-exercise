@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from uuid import UUID
 from typing import List
 
@@ -10,13 +10,15 @@ from service import UserService, token_interceptor
 router = APIRouter(prefix="/users", tags=["User"])
 
 
-@router.get('', response_model=List[UserViewModel])
+# @router.get('', response_model=List[UserViewModel])
+@router.get('')
 async def get_users(
+        request: Request,
         admin: User = Depends(token_interceptor),
         service: UserService = Depends()):
     if not service.check_admin_permission(admin):
         raise service.access_denied_exception()
-    return service.list(admin.company_id)
+    return service.list(admin.company_id, request)
 
 
 @router.get('/{user_id}', response_model=UserViewModel)

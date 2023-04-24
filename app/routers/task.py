@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from typing import List
 from uuid import UUID
 
@@ -12,11 +12,12 @@ router = APIRouter(prefix="/tasks", tags=["Task"])
 
 @router.get('', response_model=List[TaskViewModel])
 async def get_tasks(
+        request: Request,
         admin: User = Depends(token_interceptor),
         service: TaskService = Depends()):
     if not service.check_admin_permission(admin):
         raise service.access_denied_exception()
-    return service.list(admin.company_id)
+    return service.list(admin.company_id, request)
 
 
 @router.get('/{task_id}', response_model=TaskViewModel)

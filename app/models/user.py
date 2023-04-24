@@ -3,6 +3,8 @@ from datetime import datetime
 from uuid import UUID
 from typing import Optional
 
+from .request import BaseQueryRequest
+
 
 class UserModel(BaseModel):
     email: str = Field(min_length=1, max_length=255)
@@ -34,3 +36,16 @@ class UserViewModel(BaseUserViewModel):
 
     class Config:
         orm_mode = True
+
+
+class UserQueryRequest(BaseQueryRequest):
+    is_admin: Optional[bool] = Field()
+
+    def get_sort_fields(self):
+        return ['id', 'first_name', 'username']
+
+    def get_filter_fields(self):
+        return ['is_admin']
+
+    def get_search_fields(self):
+        return ['username', 'first_name']

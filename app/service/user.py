@@ -1,22 +1,24 @@
-from fastapi import Depends
+from fastapi import Depends, Request
 from datetime import datetime
 from uuid import UUID
 
-from models import UserModel
+from models import UserModel, UserQueryRequest
 from schemas import User, get_password_hash
 
 from repositories import UserRepository
-from .base import BaseService
+from .query_params import QueryParamsService
 
 
-class UserService(BaseService):
+class UserService(QueryParamsService):
     repository: UserRepository
 
     def __init__(self, repository: UserRepository = Depends()) -> None:
         self.repository = repository
 
-    def list(self, company_id: UUID):
-        return self.repository.list(company_id)
+    def list(self, company_id: UUID, request: Request):
+        params = UserQueryRequest(**dict(request.query_params))
+        params = self.transform_query_params(params)
+        return self.repository.list(company_id, params)
 
     def show(self, id: UUID):
         return self.repository.show(id)
