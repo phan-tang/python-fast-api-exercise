@@ -41,3 +41,6 @@ class CompanyService(QueryParamsService):
 
     def delete(self, company: Company):
         return self.repository.delete(company)
+
+    def get_company_users(self, company_id: UUID):
+        return self.repository.get_company_users(company_id)
