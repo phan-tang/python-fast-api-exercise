@@ -49,3 +49,14 @@ After create token, copy it into .env file
 Run application by command:
 > uvicorn main:app --reload
 ```
+
+### APIs permission
+
+- /admins: Only superadmin can use these APIs.
+- /companies:
+    - All users can use API to get list of companies.
+    - Only superadmin can create, delete a new company. One company can be deleted when it doesn't have employees.
+    - Only admin company can update company information.
+- /users: Only company admin can use these APIs to manage their company employees.
+- /tasks: Only company admin can use these APIs to manage their company tasks (tasks are assigned to their employees).
+- /auth/token: All users can use this API to login.
