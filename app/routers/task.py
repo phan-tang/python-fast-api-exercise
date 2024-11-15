@@ -63,6 +63,8 @@ async def create_task(
         service: TaskService = Depends()):
     if not service.check_admin_permission(admin):
         raise service.access_denied_exception()
+    if not service.check_permission_to_create_task(admin.company_id, request.user_id):
+        raise service.access_denied_exception()
     return service.create(request)
 
 

@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from schemas import Task, User
-
+from sqlalchemy import and_
 from .base import BaseRepository, InterfaceRepository
 
 
@@ -18,3 +18,6 @@ class TaskRepository(BaseRepository, InterfaceRepository):
 
     def show(self, id: UUID, company_id: UUID):
         return self.db.query(Task).join(Task.user.and_(User.company_id == company_id)).filter(Task.id == id).first()
+
+    def find_user_of_company(self, company_id: str, user_id: str):
+        return self.db.query(User).filter(and_(*[User.company_id == company_id, User.id == user_id])).first()

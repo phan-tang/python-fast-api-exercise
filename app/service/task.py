@@ -41,3 +41,6 @@ class TaskService(QueryParamsService):
 
     def delete(self, task: Task):
         return self.repository.delete(task)
+
+    def check_permission_to_create_task(self, company_id, user_id):
+        return self.repository.find_user_of_company(company_id, user_id)
