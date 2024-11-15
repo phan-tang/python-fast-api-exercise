@@ -1,4 +1,4 @@
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from datetime import datetime
 from uuid import UUID
 
@@ -14,6 +14,7 @@ class AdminService(BaseService):
 
     def __init__(self, repository: AdminRepository = Depends()) -> None:
         self.repository = repository
+        self.uniqe_fields = ['username', 'email']
 
     def list(self):
         return self.repository.list()
@@ -23,6 +24,8 @@ class AdminService(BaseService):
 
     def create(self, request: AdminModel):
         new_user = User(**dict(request))
+        for key in self.uniqe_fields:
+            self.check_username_email_exists(key, getattr(new_user, key))
         new_user.is_superadmin = False
         new_user.is_admin = True
         new_user.password = get_password_hash(request.password)
@@ -38,3 +41,8 @@ class AdminService(BaseService):
 
     def delete(self, user: User):
         return self.repository.delete(user)
+
+    def check_username_email_exists(self, key: str, value: str):
+        check_user = self.repository.find_element_by_key(key, value)
+        if check_user:
+            raise HTTPException(status_code=422, detail=f"Username or email already exists")

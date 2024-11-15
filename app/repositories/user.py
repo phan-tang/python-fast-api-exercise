@@ -21,3 +21,6 @@ class UserRepository(BaseRepository, InterfaceRepository):
 
     def get_user_tasks(self, id: UUID):
         return self.db.query(Task).filter(Task.user_id == id).all()
+
+    def find_element_by_key(self, key: str, value: str):
+        return self.db.query(User).filter(getattr(User, key) == value).first()

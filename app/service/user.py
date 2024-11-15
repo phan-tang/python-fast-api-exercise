@@ -1,4 +1,4 @@
-from fastapi import Depends, Request
+from fastapi import Depends, Request, HTTPException
 from datetime import datetime
 from uuid import UUID
 
@@ -14,6 +14,7 @@ class UserService(QueryParamsService):
 
     def __init__(self, repository: UserRepository = Depends()) -> None:
         self.repository = repository
+        self.uniqe_fields = ['username', 'email']
 
     def list_by_request(self, company_id: UUID, request: Request):
         params = UserQueryRequest(**dict(request.query_params))
@@ -30,6 +31,8 @@ class UserService(QueryParamsService):
 
     def create(self, company_id: UUID, request: UserModel):
         new_user = User(**dict(request))
+        for key in self.uniqe_fields:
+            self.check_username_email_exists(key, getattr(new_user, key))
         new_user.is_superadmin = False
         new_user.company_id = company_id
         new_user.password = get_password_hash(request.password)
@@ -52,3 +55,8 @@ class UserService(QueryParamsService):
 
     def get_user_tasks(self, id: UUID):
         return self.repository.get_user_tasks(id)
+
+    def check_username_email_exists(self, key: str, value: str):
+        check_user = self.repository.find_element_by_key(key, value)
+        if check_user:
+            raise HTTPException(status_code=422, detail=f"Username or email already exists")
