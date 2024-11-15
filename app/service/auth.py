@@ -59,5 +59,5 @@ def token_interceptor(token: str = Depends(oa2_bearer)) -> User:
         return user
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Username or password is incorrect",
+                            detail="Please login to continue",
                             headers={"WWW-Authenticate": "Bearer"})
